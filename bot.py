@@ -2,106 +2,140 @@ import os
 import random
 
 import discord
-from discord import client
 from discord import member
 from discord.ext.commands import has_permissions, MissingPermissions
 from discord.ext import commands
 from dotenv import load_dotenv
+import discord.ext
+from discord import app_commands
+import giphy_client
+from giphy_client.rest import ApiException
 
-DISCORD_TOKEN = 'MTA0NDgyMjk5OTYxMTc1MjQ1OA.GmDbGm.RC7czVPuqdVB1Z7XJrBZ2jq3N4vmWmExBJTwd0'
+
+DISCORD_TOKEN = 'MTA2NDUwMTQzMTMyOTExMjA4NQ.Gh0t-n.SNzKwFSopMtM2zeXL6gZ23kYzuWmFS422t3_AY'
 
 load_dotenv()
 TOKEN = os.getenv(DISCORD_TOKEN)
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 intents.message_content = True
-
+client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
 
 bot = commands.Bot(command_prefix='$', intents= intents)
 
-@bot.command(name='99', help='Responds with a random quote from Brooklyn 99')
-async def nine_nine(ctx):
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
 
-    response = random.choice(brooklyn_99_quotes)
-    await ctx.send(response)
+@client.event
+async def on_ready():
+    await tree.sync(guild=discord.Object(id=1019459465453502594))
+    print("The bot is ready!")
 
 
-@bot.command(name= 'percent', help = 'Gives Percent')
-async def percent(ctx):
-    response_p = str(random.randrange(1, 100))
-    await ctx.send(response_p + '%')
-
-@bot.command(name = 'roll', help= 'Rolls a dice')
-async def roll(ctx):
-    rr = str(random.randint(1,6))
-    await ctx.send(rr)
-
-@bot.command(name = 'hello', help = 'Says Hello')
-async def hello(ctx):
-    hello = 'Hey Guys, Gabe Itch 2 here'
-    await ctx.send(hello)
-
-@bot.command(name = 'lucky_number', help = 'Random Lucky number 1-100' )
-async def lucky_number(ctx):
-    ln = str(random.randint(1,100))
-    await ctx.send(ln)
-
-@bot.command(name = 'fbi', help = 'FBI Open Up')
-async def fbi(ctx):
-    fbi = 'FBI OPEN UP!!!'
-    await ctx.send(fbi)
-
-@bot.command(name= 'percent_gay', help= 'Says how gay someone is. Remember to add the name of the person after the command')
-async def percent_gay(ctx, who):
-    p_gay = str(random.randrange(1, 100))
-    await ctx.send(who + ' is ' + p_gay + '% ' + 'gay!')
-
-@bot.command(name = 'albert_fish', help= 'Albert Fish')
-async def albert_fish(ctx):
-    alfish = 'ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERTALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT FISH ALBERT'
-    await ctx.send(alfish)
-
-@bot.command(name= 'percent_black', help= 'Says how black someone is')
-async def percent_black(ctx, who):
-    p_black = str(random.randrange(1, 100))
-    await ctx.send(who + ' is ' + p_black + '% ' + 'black!')
-
-@bot.command(name= 'purge', help= 'delet message')
-async def purge(ctx, amount = 5):
-    await ctx.channel.purge(limit= amount)
-
-@bot.command(name='kick', help='kick nerds')
-@has_permissions(kick_members = True)
-async def kick(ctx, member: discord.Member, *, reason= None):
-    await member.kick(reason=reason)
-    await ctx.send(f'User {member} has been kicked')
-
-@kick.error
-async def kick_error(ctx, error):
-    if isinstance(error, commands.MissingPermissions):
-        await ctx.send("You don't have permission to kick people!")
-
-@bot.command(name='ban', help='ban nerds')
-@has_permissions(ban_members = True)
-async def ban(ctx, member: discord.Member, *, reason= None):
-    await member.ban(reason=reason)
-    await ctx.send(f'User {member} has been banned')
-
-@ban.error
-async def ban_error(ctx, error):
-    if isinstance(error, commands.MissingPermissions):
-        await ctx.send("You don't have permission to ban people!")
+@tree.command(guild=discord.Object(id=1019459465453502594), description='test')
+async def test(interaction: discord.Interaction, number: int, string: str):
+    await interaction.response.send_message(f'{number=} {string=}', ephemeral=True)
 
 
-bot.run(DISCORD_TOKEN)
+@tree.command(guild=discord.Object(id=1019459465453502594), description='hi')
+async def hi(interaction: discord.Interaction):
+    await interaction.response.send_message('hi')
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description='Music Hitler supporters listen to')
+async def hitler_propaganda(interaction: discord.Interaction):
+    await interaction.response.send_message('https://open.spotify.com/playlist/7J3dO4u5CMUQ2UzpJGGDLK')
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="Hitler's Long Lost Son")
+async def ye(interaction: discord.Interaction):
+    await interaction.response.send_message('https://imgur.com/search/score?q=kanye')
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="Hitler's long lost son")
+async def kanye(interaction: discord.Interaction,*, q: str = 'Kanye'):
+    api_key = "eN57UOl0oCBIEjBJxsyL56c5KQLfbEx0"
+    api_instance = giphy_client.DefaultApi()
+
+    try:
+
+        api_response = api_instance.gifs_search_get(api_key, q)
+        lst = list(api_response.data)
+        giff = random.choice(lst)
+
+        await interaction.response.send_message(giff.embed_url)
+
+    except ApiException as e:
+        print("Exception when calling Api")
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="Search for a random gif!")
+async def gif_search(interaction: discord.Interaction,*, q: str):
+    api_key = "eN57UOl0oCBIEjBJxsyL56c5KQLfbEx0"
+    api_instance = giphy_client.DefaultApi()
+
+    try:
+
+        api_response = api_instance.gifs_search_get(api_key, q)
+        lst = list(api_response.data)
+        giff = random.choice(lst)
+
+        await interaction.response.send_message(giff.embed_url)
+
+    except ApiException as e:
+        print("Exception when calling Api")
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="Random gifs!")
+async def random_gif(interaction: discord.Interaction, q: str = 'random'):
+    api_key = "eN57UOl0oCBIEjBJxsyL56c5KQLfbEx0"
+    api_instance = giphy_client.DefaultApi()
+
+    try:
+
+        api_response = api_instance.gifs_search_get(api_key,q)
+        lst = list(api_response.data)
+        giff = random.choice(lst)
+
+        await interaction.response.send_message(giff.embed_url)
+
+    except ApiException as e:
+        print("Exception when calling Api")
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="Trending gifs!")
+async def trending_gif(interaction: discord.Interaction):
+    api_key = "eN57UOl0oCBIEjBJxsyL56c5KQLfbEx0"
+    api_instance = giphy_client.DefaultApi()
+
+    try:
+
+        api_response = api_instance.gifs_trending_get(api_key)
+        lst = list(api_response.data)
+        giff = random.choice(lst)
+
+        await interaction.response.send_message(giff.embed_url)
+
+    except ApiException as e:
+        print("Exception when calling Api")
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="What percentage is someone of something")
+async def percentage(interaction: discord.Interaction, who: str, what: str):
+    percentage = str(random.randint(1, 100))
+    await interaction.response.send_message(who + ' is ' + percentage + '% ' + what + '!')
+
+
+@tree.command(guild=discord.Object(id=1019459465453502594), description="% generator")
+async def percent(interaction: discord.Interaction):
+    percent = str(random.randint(1, 100))
+    await interaction.response.send_message(percent + '%')
+
+
+@tree.command()
+async def slash_command(int: discord.Interaction):
+    await int.response.send_message("pp")
+
+client.run(DISCORD_TOKEN)
 
 
