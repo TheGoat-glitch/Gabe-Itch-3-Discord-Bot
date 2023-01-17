@@ -12,7 +12,7 @@ import giphy_client
 from giphy_client.rest import ApiException
 
 
-DISCORD_TOKEN = 'MTA2NDUwMTQzMTMyOTExMjA4NQ.Gh0t-n.SNzKwFSopMtM2zeXL6gZ23kYzuWmFS422t3_AY'
+DISCORD_TOKEN = 'THE TOKEN'
 
 load_dotenv()
 TOKEN = os.getenv(DISCORD_TOKEN)
